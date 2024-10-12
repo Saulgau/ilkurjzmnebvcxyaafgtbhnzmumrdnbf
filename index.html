@@ -62,7 +62,6 @@
     </div>
 
     <script>
-        // Replace this URL with your actual m3u8 playlist URL
         const playlistUrl = 'https://raw.githubusercontent.com/Saulgau/ilkurjzmnebvcxyaafgtbhnzmumrdnbf/refs/heads/main/lghhgfshgfhsgfhsgffgfbdazuvfgbdzuvcbdzfsubvczadfubvdzfuabvhudfbvzdfagvziudfgzuvbdhjvbsdazugfwzuecgbzfugrznfubnf7384tcrg64x464gnx8bxuzbref.m3u8';
         
         const video = document.getElementById('video');
@@ -85,7 +84,11 @@
                             channels.push({ name, url });
                         }
                     }
-                    playChannel(0);
+                    const savedChannelIndex = localStorage.getItem('lastChannelIndex');
+                    if (savedChannelIndex !== null) {
+                        currentChannelIndex = parseInt(savedChannelIndex);
+                    }
+                    playChannel(currentChannelIndex);
                 });
         }
 
@@ -106,6 +109,9 @@
             
             video.play();
             showChannelInfo(channel.name);
+            
+            // Save the current channel index to localStorage
+            localStorage.setItem('lastChannelIndex', currentChannelIndex.toString());
         }
 
         function showChannelInfo(name) {
