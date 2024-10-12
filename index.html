@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TV</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <style>
         body, html {
             margin: 0;
@@ -51,6 +52,34 @@
             border-radius: 5px;
             display: none;
         }
+        #qualityBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #qualitySelector {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        #qualitySelector button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -59,6 +88,12 @@
         <button id="prevButton" class="button">&#9664;</button>
         <button id="nextButton" class="button">&#9654;</button>
         <div id="channelInfo"></div>
+        <button id="qualityBtn">Qualität</button>
+        <div id="qualitySelector">
+            <p>Wähle die Videoqualität:</p>
+            <button onclick="setQuality('auto')">Auto</button>
+            <div id="qualityOptions"></div>
+        </div>
     </div>
 
     <script>
@@ -68,9 +103,13 @@
         const prevButton = document.getElementById('prevButton');
         const nextButton = document.getElementById('nextButton');
         const channelInfo = document.getElementById('channelInfo');
+        const qualityBtn = document.getElementById('qualityBtn');
+        const qualitySelector = document.getElementById('qualitySelector');
         
         let channels = [];
         let currentChannelIndex = 0;
+        let hls;
+        let currentQuality = 'auto';
 
         function loadChannels() {
             fetch(playlistUrl)
@@ -100,17 +139,33 @@
             const channel = channels[currentChannelIndex];
             
             if (Hls.isSupported()) {
-                const hls = new Hls();
+                if (hls) {
+                    hls.destroy();
+                }
+                hls = new Hls({
+                    autoStartLoad: false
+                });
                 hls.loadSource(channel.url);
                 hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                    const qualityLevels = hls.levels;
+                    const qualityOptions = document.getElementById('qualityOptions');
+                    qualityOptions.innerHTML = '';
+                    qualityLevels.forEach((level, index) => {
+                        const button = document.createElement('button');
+                        button.innerText = level.height + 'p';
+                        button.onclick = () => setQuality(index);
+                        qualityOptions.appendChild(button);
+                    });
+                    hls.startLoad();
+                    video.play();
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = channel.url;
+                video.play();
             }
             
-            video.play();
             showChannelInfo(channel.name);
-            
-            // Save the current channel index to localStorage
             localStorage.setItem('lastChannelIndex', currentChannelIndex.toString());
         }
 
@@ -122,8 +177,29 @@
             }, 3000);
         }
 
+        function toggleQualitySelector() {
+            qualitySelector.style.display = qualitySelector.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function setQuality(quality) {
+            if (quality === 'auto') {
+                hls.currentLevel = -1;
+                currentQuality = 'auto';
+            } else {
+                hls.currentLevel = quality;
+                currentQuality = hls.levels[quality].height + 'p';
+            }
+            updateQualityButton();
+            toggleQualitySelector();
+        }
+
+        function updateQualityButton() {
+            qualityBtn.innerText = 'Qualität: ' + currentQuality;
+        }
+
         prevButton.addEventListener('click', () => playChannel(currentChannelIndex - 1));
         nextButton.addEventListener('click', () => playChannel(currentChannelIndex + 1));
+        qualityBtn.addEventListener('click', toggleQualitySelector);
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'a' || e.key === 'ArrowLeft') playChannel(currentChannelIndex - 1);
@@ -137,6 +213,7 @@
         });
 
         loadChannels();
+        updateQualityButton();
     </script>
 </body>
 </html>
