@@ -1,291 +1,279 @@
 <!DOCTYPE html>
 <html lang="de">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="canonical" href="https://tv-frei.webador.de/live-tv">
-        <meta property="og:title" content="Live TV | TVFrei">
-        <meta property="og:url" content="https://tv-frei.webador.de/live-tv">
-        <base href="https://tv-frei.webador.de/">
-        <meta name="description" property="og:description" content="Kostenlose Live-TV-Streams">
-        <title>Live TV | TVFrei</title>
-        <link href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" rel="shortcut icon" />
-        <link href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" rel="icon" />
-        <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta property="twitter:image" content="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            :root {
-                --primary-color: #e50914;
-                --background-color: #141414;
-                --text-color: #ffffff;
-                --card-background: rgba(255, 255, 255, 0.1);
-            }
-            
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-            
-            html {
-                -webkit-text-size-adjust: 100%;
-            }
-            
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-                background-color: var(--background-color);
-                color: var(--text-color);
-                line-height: 1.6;
-            }
-            
-            .container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            
-            header {
-                background-color: rgba(20, 20, 20, 0.8);
-                position: sticky;
-                top: 0;
-                z-index: 1000;
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-            }
-            
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TVFrei</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TVFrei">
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
+    
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --background-color: #141414;
+            --text-color: #ffffff;
+            --card-background: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: rgba(20, 20, 20, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        #searchBar {
+            flex-grow: 1;
+            margin: 0 20px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.2);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        #searchBar:focus {
+            outline: none;
+            background-color: rgba(255,255,255,0.3);
+        }
+        
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding-top: 20px;
+        }
+        
+        .channel-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .channel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .channel-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .channel-info {
+            padding: 15px;
+        }
+        
+        .channel-title {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        #player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: none;
+        }
+        
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #closePlayer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            z-index: 2001;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
             .header-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 15px 20px;
-                max-width: 1200px;
-                margin: 0 auto;
+                flex-direction: column;
+                align-items: stretch;
             }
             
             .logo {
-                font-size: 24px;
-                font-weight: bold;
-                color: var(--primary-color);
-                text-decoration: none;
+                margin-bottom: 10px;
             }
             
             #searchBar {
-                flex-grow: 1;
-                margin: 0 20px;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 20px;
-                background-color: rgba(255,255,255,0.2);
-                color: var(--text-color);
-                font-size: 16px;
-                transition: background-color 0.3s ease;
-            }
-            
-            #searchBar::placeholder {
-                color: rgba(255,255,255,0.7);
-            }
-            
-            #searchBar:focus {
-                outline: none;
-                background-color: rgba(255,255,255,0.3);
+                margin: 10px 0;
             }
             
             .channel-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 20px;
-                padding-top: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
-            
-            .channel-card {
-                background-color: var(--card-background);
-                border-radius: 8px;
-                overflow: hidden;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                cursor: pointer;
-            }
-            
-            .channel-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            }
-            
-            .channel-card img {
-                width: 100%;
-                height: auto;
-                display: block;
-            }
-            
-            .channel-info {
-                padding: 15px;
-            }
-            
-            .channel-title {
-                font-size: 18px;
-                margin-bottom: 5px;
-            }
-            
-            .channel-description {
-                font-size: 14px;
-                color: rgba(255,255,255,0.7);
-            }
-            
-            @media (max-width: 768px) {
-                .header-content {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                
-                .logo {
-                    margin-bottom: 10px;
-                }
-                
-                #searchBar {
-                    margin: 10px 0;
-                }
-                
-                .channel-grid {
-                    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <div class="header-content">
-                <a href="#" class="logo" id="refreshLink">TVFrei</a>
-                <input type="text" id="searchBar" placeholder="Sender suchen...">
-            </div>
-        </header>
-        
-        <div class="container">
-            <div class="channel-grid" id="channelGrid"></div>
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo" id="refreshLink">TVFrei</a>
+            <input type="text" id="searchBar" placeholder="Sender suchen...">
         </div>
+    </header>
+    
+    <div class="container">
+        <div class="channel-grid" id="channelGrid"></div>
+    </div>
+    
+    <div id="player">
+        <button id="closePlayer"><i class="fas fa-times"></i></button>
+        <video id="videoPlayer" controls></video>
+    </div>
 
-        <!-- Der Rest des Codes folgt im nächsten Teil -->
-        <div id="player" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000;">
-            <button id="closePlayer" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #fff; font-size: 24px; z-index: 2001; cursor: pointer;">
-                <i class="fas fa-times"></i>
-            </button>
-            <video id="videoPlayer" controls style="width: 100%; height: 100%;"></video>
-        </div>
-        
-        <div id="resumePrompt" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px; border-radius: 10px; text-align: center; z-index: 2002;">
-            <p>Möchten Sie dort fortfahren, wo Sie aufgehört haben?</p>
-            <button onclick="resumePlayback(true)" style="margin: 10px; padding: 10px 20px; cursor: pointer; background: var(--primary-color); color: #fff; border: none; border-radius: 4px;">Ja</button>
-            <button onclick="resumePlayback(false)" style="margin: 10px; padding: 10px 20px; cursor: pointer; background: var(--primary-color); color: #fff; border: none; border-radius: 4px;">Nein</button>
-        </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        const channels = [
+            { name: "Das Erste", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/oco95p/cf416cc96a575e40e35f43c05d829efdb176bc35.png", streamUrl: "https://mcdn.daserste.de/daserste/de/master.m3u8" },
+            { name: "ZDF", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/0glb8v/e19130e25f23d70df7f85807c6ddc1c8d62109f5.png", streamUrl: "https://zdf-hls-15.akamaized.net/hls/live/2016498/de/high/master.m3u8" },
+            { name: "ProSieben", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/f9cqtn/67c3154ef4906af6324dc75cdd2ec4b8f32ba77d.png", streamUrl: "https://s7.2ix2tv.de/conv/go/prosieben/chunks.m3u81a.doc&ios=1" },
+            { name: "VOX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/p0l8k3/ab1b4db17f18456ab5fef3b39180c2f0fac69833.png", streamUrl: "https://s7.2ix2tv.de/conv/go/vox/chunks.m3u81a.doc&ios=1" },
+            { name: "Kabel Eins", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/l64z1y/97cabed29d22f5726bc367c02f7f7860e7e95ea4.png", streamUrl: "https://s7.2ix2tv.de/conv/go/kabel-eins/chunks.m3u81a.doc&ios=1" },
+            { name: "Sat.1", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/0r31ry/d36b5ed6e8b046be225671f62b42f6362c55ee22.png", streamUrl: "https://s7.2ix2tv.de/conv/go/sat-1/chunks.m3u81a.doc&ios=1" },
+            { name: "Sixx", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/l253cw/de47028468ad1df49de852883dc42addad5825c1.png", streamUrl: "https://s7.2ix2tv.de/conv/go/sixx/chunks.m3u81a.doc&ios=1" },
+            { name: "TELE 5", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/q2nmo0/32a48373344696c10ba67188d40b84276a5ffbb8.jpg", streamUrl: "https://s7.2ix2tv.de/conv/go/tele5/chunks.m3u81a.doc&ios=1" },
+            { name: "RTL", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/sd8o82/9837608c7cfa66c854354b00e53992f6861bcd1a.png", streamUrl: "https://s7.2ix2tv.de/conv/go/rtl/chunks.m3u81a.doc&ios=1" },
+            { name: "ZDFneo", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/1sodf7/cb898bc1d4f4291a994851ae22ae93b40467181c.png", streamUrl: "https://zdf-hls-16.akamaized.net/hls/live/2016499/de/high/master.m3u8" },
+            { name: "ZDFinfo", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/628k5k/1aeb69ec2c60a45a57bc0c01fd6c36b6dbf377e7.png", streamUrl: "https://zdf-hls-17.akamaized.net/hls/live/2016500/de/high/master.m3u8" },
+            { name: "VOXup", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/sfmw2l/voxup2-photoroom.jpg", streamUrl: "https://s7.2ix2tv.de/conv/go/voxup/chunks.m3u81a.doc&ios=1" },
+            { name: "RTL II", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/67c6wk/bcfa273955d4de5c524ab6a632793d4e0ca5d340.png", streamUrl: "https://s7.2ix2tv.de/conv/go/rtl2/chunks.m3u81a.doc&ios=1" },
+            { name: "ProSieben MAXX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/zt2k4a/39803d8155ac67b6eb5ebc6fc9ee0f776bda9078.png", streamUrl: "https://s7.2ix2tv.de/conv/go/prosieben-maxx/chunks.m3u81a.doc&ios=1" },
+            { name: "RTLup", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/mtmt5g/7c2f4696435b5416266cd09b356420953d5ff280.png", streamUrl: "https://s7.2ix2tv.de/conv/go/rtlup/chunks.m3u81a.doc&ios=1" },
+            { name: "Sat.1 Gold", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/fp5kt9/50e21d837d6ca501ef59c832f139c269ea173bf5.png", streamUrl: "https://s7.2ix2tv.de/conv/go/sat1-gold/chunks.m3u81a.doc&ios=1" },
+            { name: "SUPER RTL", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/ywaf7b/d424d9dd46e4aadf15c9b290f9566022e1f751e3.png", streamUrl: "https://s7.2ix2tv.de/conv/go/super-rtl/chunks.m3u81a.doc&ios=1" },
+            { name: "KiKA", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/22ilwv/2f0ff7b44c615c4de521878f52a67bc204e90ccc.png", streamUrl: "https://kikageohls.akamaized.net/hls/live/2022693/livetvkika_de/master.m3u8" },
+            { name: "NITRO", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/iygxov/d39e08b7e07394cf436285fb47ed36c0037b89c6.png", streamUrl: "https://s7.2ix2tv.de/conv/go/rtl-nitro/chunks.m3u81a.doc&ios=1" },
+            { name: "DMAX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/2qcgum/ddf2946d5dc4e747b294fadeeb5552643688a6a4.png", streamUrl: "https://s7.2ix2tv.de/conv/go/dmax/chunks.m3u81a.doc&ios=1" },
+            { name: "WELT", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/d9lmrb/0c7d8589ef1ecac504e6441bf09db1188f9d9a54.png", streamUrl: "https://sdn-global-live-streaming-packager-cache.3qsdn.com/13456/13456_264_live.m3u8" },
+            { name: "Red Bull TV", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/06yrg5/e1ea5bb2bb473472a8123ce8cc0079f60454c390.png", streamUrl: "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8" }
+        ];
 
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-        <script>
-            let catalog = null;
-            let currentChannel = null;
-            const defaultCatalogUrl = 'https://example.com/tv-catalog.json'; // Ersetzen Sie dies durch Ihre tatsächliche Katalog-URL
+        function renderChannels(channels) {
+            const channelGrid = document.getElementById('channelGrid');
+            channelGrid.innerHTML = '';
+            channels.forEach(channel => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                card.innerHTML = `
+                    <img src="${channel.logo}" alt="${channel.name}">
+                    <div class="channel-info">
+                        <h3 class="channel-title">${channel.name}</h3>
+                    </div>
+                `;
+                card.addEventListener('click', () => playChannel(channel));
+                channelGrid.appendChild(card);
+            });
+        }
 
-            async function loadCatalog(url) {
-                try {
-                    const response = await fetch(url);
-                    catalog = await response.json();
-                    renderChannels(catalog.channels);
-                } catch (error) {
-                    console.error('Fehler beim Laden des Katalogs:', error);
-                    alert('Fehler beim Laden des Katalogs. Bitte versuchen Sie es später erneut.');
-                }
-            }
+        function playChannel(channel) {
+            const player = document.getElementById('player');
+            const video = document.getElementById('videoPlayer');
+            player.style.display = 'block';
 
-            function renderChannels(channels) {
-                const channelGrid = document.getElementById('channelGrid');
-                channelGrid.innerHTML = '';
-                channels.forEach(channel => {
-                    const card = document.createElement('div');
-                    card.className = 'channel-card';
-                    card.innerHTML = `
-                        <img src="${channel.logo}" alt="${channel.name}">
-                        <div class="channel-info">
-                            <h3 class="channel-title">${channel.name}</h3>
-                            <p class="channel-description">${channel.description || 'Keine Beschreibung verfügbar'}</p>
-                        </div>
-                    `;
-                    card.addEventListener('click', () => playChannel(channel));
-                    channelGrid.appendChild(card);
-                });
-            }
-
-            function playChannel(channel) {
-                currentChannel = channel;
-                const savedTime = localStorage.getItem(`channelProgress_${channel.id}`);
-
-                if (savedTime) {
-                    document.getElementById('resumePrompt').style.display = 'block';
-                } else {
-                    startPlayback();
-                }
-            }
-
-            function resumePlayback(resume) {
-                document.getElementById('resumePrompt').style.display = 'none';
-                startPlayback(resume);
-            }
-
-            function startPlayback(resume = false) {
-                const player = document.getElementById('player');
-                const video = document.getElementById('videoPlayer');
-                player.style.display = 'block';
-
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(currentChannel.streamUrl);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                        if (resume) {
-                            const savedTime = localStorage.getItem(`channelProgress_${currentChannel.id}`);
-                            video.currentTime = savedTime ? parseFloat(savedTime) : 0;
-                        }
-                        video.play();
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = currentChannel.streamUrl;
-                    if (resume) {
-                        const savedTime = localStorage.getItem(`channelProgress_${currentChannel.id}`);
-                        video.currentTime = savedTime ? parseFloat(savedTime) : 0;
-                    }
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(channel.streamUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play();
-                }
-
-                video.addEventListener('timeupdate', function() {
-                    localStorage.setItem(`channelProgress_${currentChannel.id}`, video.currentTime);
                 });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = channel.streamUrl;
+                video.play();
             }
+        }
 
-            document.getElementById('closePlayer').addEventListener('click', () => {
-                const player = document.getElementById('player');
-                const video = document.getElementById('videoPlayer');
-                player.style.display = 'none';
-                video.pause();
-                video.src = '';
-                currentChannel = null;
-            });
+        document.getElementById('closePlayer').addEventListener('click', () => {
+            const player = document.getElementById('player');
+            const video = document.getElementById('videoPlayer');
+            player.style.display = 'none';
+            video.pause();
+            video.src = '';
+        });
 
-            document.getElementById('searchBar').addEventListener('input', searchChannels);
+        document.getElementById('searchBar').addEventListener('input', searchChannels);
 
-            function searchChannels() {
-                const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-                const filteredChannels = catalog.channels.filter(channel => 
-                    channel.name.toLowerCase().includes(searchTerm)
-                );
-                renderChannels(filteredChannels);
-            }
+        function searchChannels() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const filteredChannels = channels.filter(channel => 
+                channel.name.toLowerCase().includes(searchTerm)
+            );
+            renderChannels(filteredChannels);
+        }
 
-            document.getElementById('refreshLink').addEventListener('click', (e) => {
-                e.preventDefault();
-                loadCatalog(defaultCatalogUrl);
-            });
+        document.getElementById('refreshLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            renderChannels(channels);
+        });
 
-            // Beim Start der Seite
-            loadCatalog(defaultCatalogUrl);
-        </script>
-    </body>
+        // Beim Start der Seite
+        renderChannels(channels);
+    </script>
+</body>
 </html>
