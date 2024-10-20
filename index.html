@@ -119,6 +119,34 @@
             text-align: center;
         }
         
+        #player-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+        }
+        
+        #video-player {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #close-player {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 2001;
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -143,6 +171,12 @@
         <div class="channel-grid" id="channelGrid"></div>
     </div>
 
+    <div id="player-container">
+        <button id="close-player"><i class="fas fa-times"></i></button>
+        <video id="video-player" controls></video>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         const channels = [
             { name: "Das Erste", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/oco95p/cf416cc96a575e40e35f43c05d829efdb176bc35.png", streamUrl: "https://mcdn.daserste.de/daserste/de/master.m3u8" },
@@ -169,7 +203,7 @@
             { name: "Red Bull TV", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/06yrg5/e1ea5bb2bb473472a8123ce8cc0079f60454c390.png", streamUrl: "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8" }
         ];
 
-function renderChannels(channels) {
+        function renderChannels(channels) {
             const channelGrid = document.getElementById('channelGrid');
             channelGrid.innerHTML = '';
             channels.forEach(channel => {
@@ -181,15 +215,31 @@ function renderChannels(channels) {
                         <h3 class="channel-title">${channel.name}</h3>
                     </div>
                 `;
-                card.addEventListener('click', () => openStreamTab(channel));
+                card.addEventListener('click', () => playStream(channel));
                 channelGrid.appendChild(card);
             });
         }
 
-        function openStreamTab(channel) {
-            // Diese Funktion wird im zweiten Teil implementiert
-            console.log(`Öffne Stream für ${channel.name}: ${channel.streamUrl}`);
-            // Hier kommt später die Logik zum Öffnen des Streams in einem neuen Tab
+        function playStream(channel) {
+            const playerContainer = document.getElementById('player-container');
+            const videoPlayer = document.getElementById('video-player');
+            playerContainer.style.display = 'block';
+
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(channel.streamUrl);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    videoPlayer.play();
+                });
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = channel.streamUrl;
+                videoPlayer.addEventListener('loadedmetadata', function() {
+                    videoPlayer.play();
+                });
+            } else {
+                console.error('This browser does not support HLS playback.');
+            }
         }
 
         function searchChannels() {
@@ -205,6 +255,14 @@ function renderChannels(channels) {
         document.getElementById('refreshLink').addEventListener('click', (e) => {
             e.preventDefault();
             renderChannels(channels);
+        });
+
+        document.getElementById('close-player').addEventListener('click', () => {
+            const playerContainer = document.getElementById('player-container');
+            const videoPlayer = document.getElementById('video-player');
+            playerContainer.style.display = 'none';
+            videoPlayer.pause();
+            videoPlayer.src = '';
         });
 
         // Initialisierung
