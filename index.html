@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TVFrei</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TVFrei">
-    
+    <title>TVFrei</title>
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
-    
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #e50914;
@@ -28,21 +24,26 @@
             padding: 0;
         }
         
-        html {
-            -webkit-text-size-adjust: 100%;
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 20px;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         
         header {
@@ -52,6 +53,7 @@
             z-index: 1000;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            padding-top: env(safe-area-inset-top);
         }
         
         .header-content {
@@ -59,8 +61,6 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
         }
         
         .logo {
@@ -72,14 +72,13 @@
         
         #searchBar {
             flex-grow: 1;
-            margin: 0 20px;
+            margin: 0 10px;
             padding: 10px 15px;
             border: none;
             border-radius: 20px;
             background-color: rgba(255,255,255,0.2);
             color: var(--text-color);
             font-size: 16px;
-            transition: background-color 0.3s ease;
         }
         
         #searchBar:focus {
@@ -89,8 +88,8 @@
         
         .channel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
             padding-top: 20px;
         }
         
@@ -98,13 +97,11 @@
             background-color: var(--card-background);
             border-radius: 8px;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
+            transition: transform 0.3s ease;
         }
         
-        .channel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        .channel-card:active {
+            transform: scale(0.95);
         }
         
         .channel-card img {
@@ -114,58 +111,22 @@
         }
         
         .channel-info {
-            padding: 15px;
+            padding: 10px;
         }
         
         .channel-title {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        
-        #player {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 2000;
-            display: none;
-        }
-        
-        #videoPlayer {
-            width: 100%;
-            height: 100%;
-        }
-        
-        #closePlayer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            z-index: 2001;
-            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
         }
         
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .logo {
-                margin-bottom: 10px;
             }
             
             #searchBar {
                 margin: 10px 0;
-            }
-            
-            .channel-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                width: 100%;
             }
         }
     </style>
@@ -181,13 +142,7 @@
     <div class="container">
         <div class="channel-grid" id="channelGrid"></div>
     </div>
-    
-    <div id="player">
-        <button id="closePlayer"><i class="fas fa-times"></i></button>
-        <video id="videoPlayer" controls></video>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         const channels = [
             { name: "Das Erste", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/oco95p/cf416cc96a575e40e35f43c05d829efdb176bc35.png", streamUrl: "https://mcdn.daserste.de/daserste/de/master.m3u8" },
@@ -214,50 +169,28 @@
             { name: "Red Bull TV", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/06yrg5/e1ea5bb2bb473472a8123ce8cc0079f60454c390.png", streamUrl: "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8" }
         ];
 
-        function renderChannels(channels) {
+function renderChannels(channels) {
             const channelGrid = document.getElementById('channelGrid');
             channelGrid.innerHTML = '';
             channels.forEach(channel => {
                 const card = document.createElement('div');
                 card.className = 'channel-card';
                 card.innerHTML = `
-                    <img src="${channel.logo}" alt="${channel.name}">
+                    <img src="${channel.logo}" alt="${channel.name}" loading="lazy">
                     <div class="channel-info">
                         <h3 class="channel-title">${channel.name}</h3>
                     </div>
                 `;
-                card.addEventListener('click', () => playChannel(channel));
+                card.addEventListener('click', () => openStreamTab(channel));
                 channelGrid.appendChild(card);
             });
         }
 
-        function playChannel(channel) {
-            const player = document.getElementById('player');
-            const video = document.getElementById('videoPlayer');
-            player.style.display = 'block';
-
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(channel.streamUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = channel.streamUrl;
-                video.play();
-            }
+        function openStreamTab(channel) {
+            // Diese Funktion wird im zweiten Teil implementiert
+            console.log(`Öffne Stream für ${channel.name}: ${channel.streamUrl}`);
+            // Hier kommt später die Logik zum Öffnen des Streams in einem neuen Tab
         }
-
-        document.getElementById('closePlayer').addEventListener('click', () => {
-            const player = document.getElementById('player');
-            const video = document.getElementById('videoPlayer');
-            player.style.display = 'none';
-            video.pause();
-            video.src = '';
-        });
-
-        document.getElementById('searchBar').addEventListener('input', searchChannels);
 
         function searchChannels() {
             const searchTerm = document.getElementById('searchBar').value.toLowerCase();
@@ -267,13 +200,26 @@
             renderChannels(filteredChannels);
         }
 
+        document.getElementById('searchBar').addEventListener('input', searchChannels);
+
         document.getElementById('refreshLink').addEventListener('click', (e) => {
             e.preventDefault();
             renderChannels(channels);
         });
 
-        // Beim Start der Seite
+        // Initialisierung
         renderChannels(channels);
+
+        // iOS-spezifische Anpassungen
+        if (("standalone" in window.navigator) && window.navigator.standalone) {
+            // Läuft als Web-App auf dem Home-Bildschirm
+            document.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A' && event.target.getAttribute('href')) {
+                    event.preventDefault();
+                    window.location = event.target.getAttribute('href');
+                }
+            }, false);
+        }
     </script>
 </body>
 </html>
