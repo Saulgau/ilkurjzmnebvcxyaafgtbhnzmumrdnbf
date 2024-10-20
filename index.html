@@ -9,7 +9,6 @@
     <title>TVFrei</title>
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png">
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2798/2798007.png" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #e50914;
@@ -24,99 +23,50 @@
             padding: 0;
         }
         
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
         
         header {
-            background-color: rgba(20, 20, 20, 0.8);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding-top: env(safe-area-inset-top);
+            background-color: var(--primary-color);
+            padding: 1rem;
+            text-align: center;
         }
         
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-        
-        #searchBar {
-            flex-grow: 1;
-            margin: 0 10px;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 20px;
-            background-color: rgba(255,255,255,0.2);
-            color: var(--text-color);
-            font-size: 16px;
-        }
-        
-        #searchBar:focus {
-            outline: none;
-            background-color: rgba(255,255,255,0.3);
+        h1 {
+            margin: 0;
         }
         
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding-top: 20px;
+            gap: 1rem;
+            margin-top: 2rem;
         }
         
-        .channel-card {
+        .channel-button {
             background-color: var(--card-background);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .channel-card:active {
-            transform: scale(0.95);
-        }
-        
-        .channel-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        .channel-info {
-            padding: 10px;
-        }
-        
-        .channel-title {
-            font-size: 14px;
+            border: none;
+            color: var(--text-color);
+            padding: 1rem;
             text-align: center;
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .channel-button:hover {
+            background-color: var(--primary-color);
         }
         
         #player-container {
@@ -126,11 +76,13 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
             display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
         
-        #video-player {
+        #player-frame {
             width: 100%;
             height: 100%;
             border: none;
@@ -140,112 +92,108 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: none;
+            background-color: var(--primary-color);
+            color: var(--text-color);
             border: none;
-            color: white;
-            font-size: 24px;
+            padding: 10px 20px;
             cursor: pointer;
-            z-index: 2001;
-        }
-        
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-            }
-            
-            #searchBar {
-                margin: 10px 0;
-                width: 100%;
-            }
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-content">
-            <a href="#" class="logo" id="refreshLink">TVFrei</a>
-            <input type="text" id="searchBar" placeholder="Sender suchen...">
-        </div>
+        <h1>TVFrei</h1>
     </header>
     
     <div class="container">
         <div class="channel-grid" id="channelGrid"></div>
     </div>
-
+    
     <div id="player-container">
-        <button id="close-player"><i class="fas fa-times"></i></button>
-        <iframe id="video-player" frameborder="0" allowfullscreen></iframe>
+        <iframe id="player-frame" allowfullscreen></iframe>
+        <button id="close-player">Schließen</button>
     </div>
 
     <script>
         const channels = [
-            { name: "Das Erste", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/oco95p/cf416cc96a575e40e35f43c05d829efdb176bc35.png", streamId: "daserste" },
-            { name: "ZDF", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/0glb8v/e19130e25f23d70df7f85807c6ddc1c8d62109f5.png", streamId: "zdf" },
-            { name: "ProSieben", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/f9cqtn/67c3154ef4906af6324dc75cdd2ec4b8f32ba77d.png", streamId: "prosieben" },
-            { name: "VOX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/p0l8k3/ab1b4db17f18456ab5fef3b39180c2f0fac69833.png", streamId: "vox" },
-            { name: "Kabel Eins", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/l64z1y/97cabed29d22f5726bc367c02f7f7860e7e95ea4.png", streamId: "kabel1" },
-            { name: "Sat.1", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/0r31ry/d36b5ed6e8b046be225671f62b42f6362c55ee22.png", streamId: "sat1" },
-            { name: "Sixx", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/l253cw/de47028468ad1df49de852883dc42addad5825c1.png", streamId: "sixx" },
-            { name: "TELE 5", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/q2nmo0/32a48373344696c10ba67188d40b84276a5ffbb8.jpg", streamId: "tele5" },
-            { name: "RTL", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/sd8o82/9837608c7cfa66c854354b00e53992f6861bcd1a.png", streamId: "rtl" },
-            { name: "ZDFneo", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/1sodf7/cb898bc1d4f4291a994851ae22ae93b40467181c.png", streamId: "zdfneo" },
-            { name: "ZDFinfo", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/628k5k/1aeb69ec2c60a45a57bc0c01fd6c36b6dbf377e7.png", streamId: "zdfinfo" },
-            { name: "VOXup", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/sfmw2l/voxup2-photoroom.jpg", streamId: "voxup" },
-            { name: "RTL II", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/67c6wk/bcfa273955d4de5c524ab6a632793d4e0ca5d340.png", streamId: "rtl2" },
-            { name: "ProSieben MAXX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/zt2k4a/39803d8155ac67b6eb5ebc6fc9ee0f776bda9078.png", streamId: "prosiebenmaxx" },
-            { name: "RTLup", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/mtmt5g/7c2f4696435b5416266cd09b356420953d5ff280.png", streamId: "rtlup" },
-            { name: "Sat.1 Gold", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/fp5kt9/50e21d837d6ca501ef59c832f139c269ea173bf5.png", streamId: "sat1gold" },
-            { name: "SUPER RTL", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/ywaf7b/d424d9dd46e4aadf15c9b290f9566022e1f751e3.png", streamId: "superrtl" },
-            { name: "KiKA", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/22ilwv/2f0ff7b44c615c4de521878f52a67bc204e90ccc.png", streamId: "kika" },
-            { name: "NITRO", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/iygxov/d39e08b7e07394cf436285fb47ed36c0037b89c6.png", streamId: "nitro" },
-            { name: "DMAX", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/2qcgum/ddf2946d5dc4e747b294fadeeb5552643688a6a4.png", streamId: "dmax" },
-            { name: "WELT", logo: "https://primary.jwwb.nl/public/n/z/d/temp-smeagdaifuacjmmmmiya/d9lmrb/0c7d8589ef1ecac504e6441bf09db1188f9d9a54.png", streamId: "welt" }
+            { name: "Das Erste", id: "daserste" },
+            { name: "ZDF", id: "zdf" },
+            { name: "RTL", id: "rtl" },
+            { name: "SAT.1", id: "sat1" },
+            { name: "ProSieben", id: "prosieben" },
+            { name: "VOX", id: "vox" },
+            { name: "kabel eins", id: "kabel1" },
+            { name: "RTL II", id: "rtl2" },
+            { name: "SUPER RTL", id: "superrtl" },
+            { name: "KiKA", id: "kika" },
+            { name: "WELT", id: "welt" },
+            { name: "NITRO", id: "nitro" },
+            { name: "RTLplus", id: "rtlplus" },
+            { name: "SAT.1 Gold", id: "sat1gold" },
+            { name: "ProSieben MAXX", id: "prosiebenmaxx" },
+            { name: "sixx", id: "sixx" },
+            { name: "DMAX", id: "dmax" },
+            { name: "TELE 5", id: "tele5" },
+            { name: "ZDFneo", id: "zdfneo" },
+            { name: "ZDFinfo", id: "zdfinfo" },
+            { name: "VOXup", id: "voxup" }
         ];
-        function renderChannels(channels) {
+
+        function createChannelButtons() {
             const channelGrid = document.getElementById('channelGrid');
-            channelGrid.innerHTML = '';
             channels.forEach(channel => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.innerHTML = `
-                    <img src="${channel.logo}" alt="${channel.name}" loading="lazy">
-                    <div class="channel-info">
-                        <h3 class="channel-title">${channel.name}</h3>
-                    </div>
-                `;
-                card.addEventListener('click', () => playStream(channel));
-                channelGrid.appendChild(card);
+                const button = document.createElement('button');
+                button.className = 'channel-button';
+                button.textContent = channel.name;
+                button.addEventListener('click', () => playChannel(channel.id));
+                channelGrid.appendChild(button);
             });
         }
 
-        function playStream(channel) {
+        function playChannel(channelId) {
             const playerContainer = document.getElementById('player-container');
-            const videoPlayer = document.getElementById('video-player');
-            playerContainer.style.display = 'block';
-            videoPlayer.src = `https://raidrush.net/stream/embedplayer_hq.php?channel=${channel.streamId}`;
+            const playerFrame = document.getElementById('player-frame');
+            playerFrame.src = `https://raidrush.net/stream/embedplayer_hq.php?channel=${channelId}`;
+            playerContainer.style.display = 'flex';
         }
 
-        function searchChannels() {
-            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-            const filteredChannels = channels.filter(channel => 
-                channel.name.toLowerCase().includes(searchTerm)
-            );
-            renderChannels(filteredChannels);
-        }
-
-        document.getElementById('searchBar').addEventListener('input', searchChannels);
-
-        document.getElementById('refreshLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            renderChannels(channels);
-        });
-
-        document.getElementById('close-player').addEventListener('click', () => {
+        function closePlayer() {
             const playerContainer = document.getElementById('player-container');
-            const videoPlayer = document.getElementById('video-player');
+            const playerFrame = document.getElementById('player-frame');
             playerContainer.style.display = 'none';
-            videoPlayer.src = '';
-        });
+            playerFrame.src = '';
+        }
+
+        document.getElementById('close-player').addEventListener('click', closePlayer);
+
+        // Vollbildmodus aktivieren
+        function toggleFullscreen() {
+            const playerContainer = document.getElementById('player-container');
+            if (!document.fullscreenElement) {
+                if (playerContainer.requestFullscreen) {
+                    playerContainer.requestFullscreen();
+                } else if (playerContainer.mozRequestFullScreen) { // Firefox
+                    playerContainer.mozRequestFullScreen();
+                } else if (playerContainer.webkitRequestFullscreen) { // Chrome, Safari und Opera
+                    playerContainer.webkitRequestFullscreen();
+                } else if (playerContainer.msRequestFullscreen) { // Internet Explorer/Edge
+                    playerContainer.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        document.getElementById('player-container').addEventListener('dblclick', toggleFullscreen);
 
         // iOS-spezifische Anpassungen
         if (("standalone" in window.navigator) && window.navigator.standalone) {
@@ -257,68 +205,8 @@
             }, false);
         }
 
-        // Funktion zum Verhindern des Öffnens externer Links im Player
-        function setupIframe() {
-            const iframe = document.getElementById('video-player');
-            iframe.onload = function() {
-                try {
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const links = iframeDoc.getElementsByTagName('a');
-                    for (let i = 0; i < links.length; i++) {
-                        links[i].onclick = function(e) {
-                            e.preventDefault();
-                            return false;
-                        };
-                    }
-                    // Entfernen von unerwünschten Elementen
-                    const elementsToRemove = iframeDoc.querySelectorAll('.ad, .advertisement, .banner');
-                    elementsToRemove.forEach(el => el.remove());
-                } catch (e) {
-                    console.log("Kann nicht auf iframe-Inhalt zugreifen aufgrund der Same-Origin-Policy");
-                }
-            };
-        }
-
-        // Event-Listener für das Laden des iframes
-        document.getElementById('video-player').addEventListener('load', setupIframe);
-
-        // Funktion zum Aktivieren des Vollbildmodus
-        function enableFullscreen() {
-            const playerContainer = document.getElementById('player-container');
-            if (playerContainer.requestFullscreen) {
-                playerContainer.requestFullscreen();
-            } else if (playerContainer.mozRequestFullScreen) { // Firefox
-                playerContainer.mozRequestFullScreen();
-            } else if (playerContainer.webkitRequestFullscreen) { // Chrome, Safari und Opera
-                playerContainer.webkitRequestFullscreen();
-            } else if (playerContainer.msRequestFullscreen) { // Internet Explorer/Edge
-                playerContainer.msRequestFullscreen();
-            }
-        }
-
-        // Event-Listener für den Vollbildmodus
-        document.getElementById('player-container').addEventListener('click', function(e) {
-            if (e.target !== document.getElementById('close-player')) {
-                enableFullscreen();
-            }
-        });
-
-        // Funktion zum Anpassen der iframe-Größe
-        function resizeIframe() {
-            const iframe = document.getElementById('video-player');
-            const playerContainer = document.getElementById('player-container');
-            iframe.style.width = playerContainer.offsetWidth + 'px';
-            iframe.style.height = playerContainer.offsetHeight + 'px';
-        }
-
-        // Event-Listener für Fenstergrößenänderungen
-        window.addEventListener('resize', resizeIframe);
-
-        // Initialisierung der iframe-Größe
-        resizeIframe();
-
         // Initialisierung
-        renderChannels(channels);
+        createChannelButtons();
     </script>
 </body>
 </html>
