@@ -3,221 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV Programm</title>
+    <title>TV Player</title>
     <style>
-        :root {
-            --primary-bg: #121212;
-            --secondary-bg: #1e1e1e;
-            --accent-color: #bb86fc;
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --card-hover: #2d2d2d;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Dark Mode Design */
         body {
-            background-color: var(--primary-bg);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #ffffff;
         }
 
-        .header {
-            background-color: var(--secondary-bg);
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
+        select {
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1em;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 5px;
         }
 
-        .logo {
-            max-width: 200px;
-            margin-bottom: 10px;
-        }
-
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .channel-card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #2196f3;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
 
-        .channel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        button:hover {
+            background-color: #1e88e5;
         }
 
-        .channel-logo {
-            width: 100%;
-            height: 150px;
-            background-color: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .channel-logo img {
-            max-width: 80%;
-            max-height: 80%;
-            object-fit: contain;
-        }
-
-        .channel-info {
-            padding: 15px;
-        }
-
-        .channel-name {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-            color: var(--text-primary);
-        }
-
-        .channel-category {
-            font-size: 0.9em;
-            color: var(--text-secondary);
-        }
-
-        #videoPlayer {
-            width: 100%;
-            background-color: black;
-            margin-bottom: 20px;
+        .player-container {
+            position: relative;
+            width: 90%; /* Anpassbar für größere Displays */
+            max-width: 1280px; /* Maximale Breite */
+            margin-top: 20px;
+            overflow: hidden;
             border-radius: 10px;
-            aspect-ratio: 16/9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
         }
 
-        .loading {
-            position: fixed;
+        .player-container::before {
+            content: "";
+            display: block;
+            padding-top: 56.25%; /* 16:9 Verhältnis */
+        }
+
+        iframe {
+            position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.2em;
-        }
-
-        .error-message {
-            background-color: #ff5555;
-            color: white;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>TV Programm</h1>
-            <p>Wählen Sie einen Sender aus</p>
-        </header>
+    <h1>TV Player</h1>
+    <label for="sender">Wähle einen Sender:</label>
+    <select id="sender">
+        <option value="">-- Bitte wählen --</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=kabel-eins">Kabel Eins</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=prosieben">ProSieben</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=vox">VOX</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=prosieben-maxx">ProSieben MAXX</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=rtl2">RTL2</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=rtl">RTL</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=sat1">Sat1</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=rtl-nitro">RTL Nitro</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=rtlup">RTLup</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=sat1-gold">Sat1 Gold</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=voxup">VOXup</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=tele5">Tele5</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=sixx">Sixx</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=dmax">DMAX</option>
+        <option value="https://s7.2ix2-alternative.de/embed.php?p=super-rtl">Super RTL</option>
+    </select>
+    <button onclick="loadPlayer()">Abspielen</button>
 
-        <video id="videoPlayer" controls>
-            <source src="" type="application/x-mpegURL">
-            Ihr Browser unterstützt keine HTML5-Videos.
-        </video>
-
-        <div id="channelGrid" class="channel-grid">
-            <!-- Sender werden hier dynamisch eingefügt -->
-        </div>
+    <div class="player-container">
+        <iframe id="player" src="" allowfullscreen></iframe>
     </div>
 
     <script>
-        // Konfiguration
-        const CONFIG = {
-            jsonUrl: 'sender.json', // Pfad zur JSON-Datei
-            defaultChannel: null
-        };
+        function loadPlayer() {
+            // Hole die ausgewählte URL aus dem Dropdown
+            const senderUrl = document.getElementById('sender').value;
 
-        // Lade die Sender aus der JSON-Datei
-        async function loadChannels() {
-            try {
-                const response = await fetch(CONFIG.jsonUrl);
-                if (!response.ok) {
-                    throw new Error('Sender konnten nicht geladen werden');
-                }
-                const channels = await response.json();
-                renderChannels(channels);
-                return channels;
-            } catch (error) {
-                showError('Fehler beim Laden der Sender: ' + error.message);
+            // Prüfen, ob ein Sender ausgewählt wurde
+            if (senderUrl) {
+                document.getElementById('player').src = senderUrl;
+            } else {
+                alert('Bitte wähle einen Sender aus!');
             }
         }
-
-        // Render die Sender-Karten
-        function renderChannels(channels) {
-            const grid = document.getElementById('channelGrid');
-            grid.innerHTML = '';
-
-            channels.forEach(channel => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.innerHTML = `
-                    <div class="channel-logo">
-                        <img src="${channel.logoUrl}" alt="${channel.name}" 
-                             onerror="this.src='/placeholder.png'">
-                    </div>
-                    <div class="channel-info">
-                        <h3 class="channel-name">${channel.name}</h3>
-                        <div class="channel-category">${channel.category}</div>
-                    </div>
-                `;
-                card.onclick = () => playChannel(channel);
-                grid.appendChild(card);
-            });
-        }
-
-        // Spiele einen Sender ab
-        function playChannel(channel) {
-            const video = document.getElementById('videoPlayer');
-            video.src = channel.streamUrl;
-            video.play().catch(error => {
-                showError('Fehler beim Abspielen: ' + error.message);
-            });
-            // Speichere letzten Sender im localStorage
-            localStorage.setItem('lastChannel', JSON.stringify(channel));
-        }
-
-        // Zeige Fehlermeldung
-        function showError(message) {
-            const error = document.createElement('div');
-            error.className = 'error-message';
-            error.textContent = message;
-            document.body.insertBefore(error, document.body.firstChild);
-            setTimeout(() => error.remove(), 5000);
-        }
-
-        // Initialisierung
-        document.addEventListener('DOMContentLoaded', () => {
-            loadChannels();
-            // Lade letzten Sender
-            const lastChannel = localStorage.getItem('lastChannel');
-            if (lastChannel) {
-                playChannel(JSON.parse(lastChannel));
-            }
-        });
     </script>
 </body>
 </html>
